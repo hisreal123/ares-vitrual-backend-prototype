@@ -38,3 +38,19 @@ def create_meeting_route():
     db.session.commit()
 
     return meeting.to_dict(), 201
+
+@meetings_bp.route('/api/meetings/join', methods=['GET'])
+def join_meeting():
+    meeting_id = request.args.get('meeting_id')
+    passcode = request.args.get('passcode')
+
+    if not meeting_id or not passcode:
+        return{'error': "Meeting ID and passcode are required"}, 400
+
+    meeting = Meeting.query.filter_by(meeting_id=meeting_id, passcode=passcode).first()
+    if not meeting:
+        return {'error': 'Invalid meeting ID or passcode'}, 404
+    if meeting.is_ended:
+        return {'error': 'Meeting has ended'}, 400
+
+    return {'meeting': meeting.to_dict()}, 200

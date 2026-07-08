@@ -32,7 +32,6 @@ class Meeting(db.Model):
     current_participants = db.Column(db.Integer, nullable=False, default=0)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     is_ended = db.Column(db.Boolean, nullable=False, default=False)
-    is_expired = db.Column(db.Boolean, nullable=False, default=False)
 
     assets = db.relationship('MeetingAsset', backref='meeting', order_by='MeetingAsset.slot_number')
 
@@ -47,7 +46,6 @@ class Meeting(db.Model):
             'current_participants': self.current_participants,
             'created_at': self.created_at.isoformat(),
             'is_ended': self.is_ended,
-            'is_expired': self.is_expired,
             'assets': [ma.asset.to_dict() for ma in self.assets],
         }
 
