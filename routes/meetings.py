@@ -54,3 +54,9 @@ def join_meeting():
         return {'error': 'Meeting has ended'}, 400
 
     return {'meeting': meeting.to_dict()}, 200
+
+
+@meetings_bp.route('/api/meetings', methods=['GET'])
+def list_meetings():
+    meetings = Meeting.query.all()
+    return {'meetings': [meeting.to_dict() for meeting in meetings]}, 200
