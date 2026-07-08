@@ -1,7 +1,9 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, send_from_directory
-from models import db, Video
+from models import db
+from routes.assets import assets_bp
+from routes.meetings import meetings_bp
 
 load_dotenv()
 app = Flask(__name__)
@@ -11,18 +13,12 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+app.register_blueprint(assets_bp)
+app.register_blueprint(meetings_bp)
+
 @app.route('/')
 def hello():
     return "Hello, World!"
-
-@app.route('/api/videos/random', methods=['GET'])
-def random_video():
-    videos = Video.query.order_by(db.func.random()).limit(3).all()
-    return {'videos': [video.to_dict() for video in videos]}
-
-@app.route('/videos/<path:filename>')
-def serve_video(filename):
-    return send_from_directory('videos', filename)
 
 if __name__ == '__main__':
     app.run(debug=True)
