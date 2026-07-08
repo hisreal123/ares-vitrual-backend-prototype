@@ -25,6 +25,25 @@ def register_asset():
     return asset.to_dict(), 201
 
 
+@assets_bp.route('/api/admin/assets/<int:asset_id>', methods=['PATCH'])
+def update_asset(asset_id):
+    asset = Asset.query.get(asset_id)
+    if not asset:
+        return {'error': 'Asset not found'}, 404
+
+    data = request.get_json()
+    if not data:
+        return {'error': 'No data provided'}, 400
+
+    for field in ('asset_type', 'path', 'owner', 'role', 'description'):
+        if field in data:
+            setattr(asset, field, data[field])
+
+    db.session.commit()
+
+    return asset.to_dict()
+
+
 @assets_bp.route('/api/assets', methods=['GET'])
 def list_assets():
     assets = Asset.query.all()
