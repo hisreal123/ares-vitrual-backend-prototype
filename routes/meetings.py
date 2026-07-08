@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from helpers import generate_meeting_id, generate_passcode
-from models import Meeting, MeetingAsset, db
+from models import Meeting, MeetingAsset, Asset, db
 
 meetings_bp = Blueprint('meetings', __name__)  # constructor
 
@@ -17,6 +17,10 @@ def create_meeting_route():
 
     if len(asset_ids) != size:
         return {'error': 'Number of asset_ids must match size'}, 400
+
+    found_assets = Asset.query.filter(Asset.id.in_(asset_ids)).all()
+    if len(found_assets) != len(set(asset_ids)):
+        return {'error': 'One or more asset_ids do not exist'}, 400
 
     meeting = Meeting(
         meeting_id=generate_meeting_id(),

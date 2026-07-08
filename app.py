@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, send_from_directory
+from flask import Flask
+from flask_cors import CORS
 from models import db
 from routes.assets import assets_bp
 from routes.meetings import meetings_bp
@@ -9,6 +10,8 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///videos.db')
 db.init_app(app)
+
+CORS(app)  # Enable CORS for all routes
 
 with app.app_context():
     db.create_all()
