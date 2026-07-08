@@ -1,10 +1,13 @@
+import os
+from dotenv import load_dotenv
 from flask import Flask, send_from_directory
 from models import db, Video
 
+load_dotenv()
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///videos.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 db.init_app(app)
-
+    
 @app.route('/')
 def hello():
     return "Hello, World!"
