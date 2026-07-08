@@ -7,7 +7,10 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///videos.db')
 db.init_app(app)
-    
+
+with app.app_context():
+    db.create_all()
+
 @app.route('/')
 def hello():
     return "Hello, World!"
@@ -22,6 +25,4 @@ def serve_video(filename):
     return send_from_directory('videos', filename)
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)
