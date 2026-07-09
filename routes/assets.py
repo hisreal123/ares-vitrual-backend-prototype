@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, request, send_from_directory
 from models import db, Asset
 
@@ -48,6 +49,19 @@ def update_asset(asset_id):
 def list_assets():
     assets = Asset.query.all()
     return {'assets': [asset.to_dict() for asset in assets]}
+
+
+@assets_bp.route('/api/admin/videos/files', methods=['GET'])
+def list_unregistered_video_files():
+    registered_paths = {asset.path for asset in Asset.query.all()}
+
+    files = []
+    for filename in os.listdir('videos'):
+        path = f"/videos/{filename}"
+        if path not in registered_paths:
+            files.append({'filename': filename, 'path': path})
+
+    return {'files': files}
 
 
 @assets_bp.route('/videos/<path:filename>')
